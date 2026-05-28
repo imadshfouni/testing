@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import './App.css';
 import { NativeVideoPlayer } from './components/NativeVideoPlayer';
 import { SynthesiaPlayer } from './components/SynthesiaPlayer';
+import { useDemoVideo } from './hooks/useDemoVideo';
 import { useSubtitleSync } from './hooks/useSubtitleSync';
 import { parseSrt } from './utils/parseSrt';
 
@@ -19,12 +20,13 @@ async function loadSubtitleFile(url) {
 }
 
 export default function App() {
-  /** @type {'synthesia' | 'native'} */
-  const [playerMode, setPlayerMode] = useState('synthesia');
+  const [playerMode, setPlayerMode] = useState('native');
   const [nativeLanguage, setNativeLanguage] = useState('en');
   const [cuesByLang, setCuesByLang] = useState({ en: [], fr: [] });
   const [loadError, setLoadError] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+
+  const demoVideo = useDemoVideo();
 
   const synthesia = useSubtitleSync({
     cuesByLang,
@@ -62,14 +64,19 @@ export default function App() {
   }, []);
 
   const subtitlesReady = !isLoading && !loadError;
+  const videoProps = {
+    videoSrc: demoVideo.videoSrc,
+    videoStatus: demoVideo.status,
+    onLoadLocalFile: demoVideo.loadLocalFile,
+  };
 
   return (
     <div className="app">
       <header className="app-header">
         <h1>Subtitle Sync Demo</h1>
         <p className="app-subtitle">
-          Two modes: Synthesia iframe (only auto-syncs if postMessage events exist)
-          and native MP4 (guaranteed sync via <code>&lt;track&gt;</code>).
+          Mode 2 (native MP4) is the reliable option. Mode 1 uses the Synthesia iframe
+          only if it sends player events; otherwise it falls back to your MP4.
         </p>
       </header>
 
@@ -77,17 +84,17 @@ export default function App() {
         <nav className="mode-tabs" aria-label="Player mode">
           <button
             type="button"
+            className={playerMode === 'native' ? 'mode-tab active' : 'mode-tab'}
+            onClick={() => setPlayerMode('native')}
+          >
+            Mode 2 — Native MP4 (recommended)
+          </button>
+          <button
+            type="button"
             className={playerMode === 'synthesia' ? 'mode-tab active' : 'mode-tab'}
             onClick={() => setPlayerMode('synthesia')}
           >
             Mode 1 — Synthesia iframe
-          </button>
-          <button
-            type="button"
-            className={playerMode === 'native' ? 'mode-tab active' : 'mode-tab'}
-            onClick={() => setPlayerMode('native')}
-          >
-            Mode 2 — Native MP4 + track
           </button>
         </nav>
 
@@ -101,10 +108,16 @@ export default function App() {
           </div>
         )}
 
-        {subtitlesReady && (
+        {subtitlesReady && demoVideo.status === 'ready' && (
           <p className="status-message status-ok">
-            Loaded {cuesByLang.en.length} EN / {cuesByLang.fr.length} FR cues (SRT)
-            and WebVTT tracks for native mode.
+            Video ready · {cuesByLang.en.length} EN / {cuesByLang.fr.length} FR cues
+          </p>
+        )}
+
+        {subtitlesReady && demoVideo.status === 'missing' && (
+          <p className="status-message status-loading">
+            No <code>demo.mp4</code> on server — choose your MP4 below or set{' '}
+            <code>VITE_VIDEO_URL</code> on Render.
           </p>
         )}
 
@@ -118,36 +131,15 @@ export default function App() {
             registerIframe={synthesia.registerIframe}
             subtitlesReady={subtitlesReady}
             loadError={loadError}
+            {...videoProps}
           />
         ) : (
           <NativeVideoPlayer
             language={nativeLanguage}
             setLanguage={setNativeLanguage}
+            {...videoProps}
           />
         )}
-
-        <section className="info-section">
-          <h2>How this works</h2>
-          <ul>
-            <li>
-              <strong>Mode 1:</strong> Choose English, French, or Off, then press
-              play on the Synthesia player. Captions appear only if the iframe sends
-              play, pause, seek, or time events via <code>postMessage</code>. We do
-              not use a separate caption timer or “Play Captions” button.
-            </li>
-            <li>
-              <strong>Mode 2:</strong> Place your export at{' '}
-              <code>public/videos/demo.mp4</code> (same content as the Synthesia
-              video). The browser syncs <code>en.vtt</code> / <code>fr.vtt</code>{' '}
-              natively — 100% automatic.
-            </li>
-            <li>
-              For production subtitles you control end-to-end, prefer Mode 2 (MP4 +
-              WebVTT). Synthesia iframe sync cannot be promised without an official
-              embed player API.
-            </li>
-          </ul>
-        </section>
       </main>
 
       <footer className="app-footer">

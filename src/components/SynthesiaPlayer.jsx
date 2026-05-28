@@ -1,14 +1,16 @@
 import { LanguageSelector } from './LanguageSelector';
+import { NativeVideoPlayer } from './NativeVideoPlayer';
+import { VideoFilePicker } from './VideoFilePicker';
 
 const SYNTHESIA_EMBED_SRC =
   'https://share.synthesia.io/embeds/videos/52860779-60ac-4df2-8a05-fd1b56a83c3e';
 
-const UNSUPPORTED_MSG =
+export const UNSUPPORTED_MSG =
   'This Synthesia iframe does not expose video timing events, so external subtitles cannot be synced automatically from outside the iframe.';
 
 /**
- * Mode 1: Synthesia iframe + overlay captions driven only by postMessage player events.
- * No manual “Play Captions” control — user presses play inside the iframe.
+ * Mode 1: Try iframe postMessage sync. If unsupported, fall back to native MP4 player
+ * (when demo.mp4 or a local file is available) so subtitles still work automatically.
  */
 export function SynthesiaPlayer({
   currentCaption,
@@ -19,27 +21,57 @@ export function SynthesiaPlayer({
   registerIframe,
   subtitlesReady,
   loadError,
+  videoSrc,
+  videoStatus,
+  onLoadLocalFile,
 }) {
+  const showIframe = syncMode === 'detecting' || syncMode === 'supported';
   const showOverlay = syncMode === 'supported' && currentCaption;
+  const useNativeFallback =
+    syncMode === 'unsupported' && (videoStatus === 'ready' || videoStatus === 'checking');
+
+  if (useNativeFallback) {
+    return (
+      <div className="synthesia-fallback">
+        <div className="sync-banner sync-banner--unsupported" role="alert">
+          <span className="sync-badge">Iframe limit</span>
+          <p className="sync-message">{UNSUPPORTED_MSG}</p>
+          <p className="sync-message sync-message--follow">
+            Playing your exported MP4 below with fully automatic subtitles instead.
+          </p>
+        </div>
+        <NativeVideoPlayer
+          language={selectedLanguage}
+          setLanguage={setLanguage}
+          videoSrc={videoSrc}
+          videoStatus={videoStatus}
+          onLoadLocalFile={onLoadLocalFile}
+          compact
+        />
+      </div>
+    );
+  }
 
   return (
     <section className="player-section" aria-label="Synthesia embed test">
       <div className="player-stack">
-        <div className="video-container">
-          <iframe
-            ref={registerIframe}
-            src={SYNTHESIA_EMBED_SRC}
-            loading="lazy"
-            title="Synthesia video player - AI Path EN"
-            allowFullScreen
-            allow="encrypted-media; fullscreen; microphone; screen-wake-lock;"
-          />
-          {showOverlay && (
-            <div className="subtitle-overlay" role="status" aria-live="polite">
-              <p className="subtitle-text">{currentCaption.text}</p>
-            </div>
-          )}
-        </div>
+        {showIframe && (
+          <div className="video-container">
+            <iframe
+              ref={registerIframe}
+              src={SYNTHESIA_EMBED_SRC}
+              loading="lazy"
+              title="Synthesia video player - AI Path EN"
+              allowFullScreen
+              allow="encrypted-media; fullscreen; microphone; screen-wake-lock;"
+            />
+            {showOverlay && (
+              <div className="subtitle-overlay" role="status" aria-live="polite">
+                <p className="subtitle-text">{currentCaption.text}</p>
+              </div>
+            )}
+          </div>
+        )}
 
         <div className="player-toolbar">
           <div className={`sync-banner sync-banner--${syncMode}`} role="status">
@@ -50,12 +82,24 @@ export function SynthesiaPlayer({
             </span>
             <p className="sync-message">
               {syncMode === 'detecting' &&
-                'Listening for Synthesia play / pause / seek / time events via postMessage… Press play on the video after choosing a language.'}
+                'Choose a language, then press play on the Synthesia video. We listen for postMessage player events…'}
               {syncMode === 'supported' &&
-                'Subtitles follow the iframe player automatically. Use the video controls — no separate caption buttons.'}
-              {syncMode === 'unsupported' && UNSUPPORTED_MSG}
+                'Subtitles follow the iframe player automatically.'}
+              {syncMode === 'unsupported' && (
+                <>
+                  {UNSUPPORTED_MSG}
+                  <br />
+                  <br />
+                  Add <code>public/videos/demo.mp4</code> or choose a file — the app
+                  will switch to the synced native player.
+                </>
+              )}
             </p>
           </div>
+
+          {syncMode === 'unsupported' && videoStatus === 'missing' && (
+            <VideoFilePicker onSelect={onLoadLocalFile} />
+          )}
 
           <LanguageSelector
             value={selectedLanguage}
@@ -63,32 +107,21 @@ export function SynthesiaPlayer({
             disabled={!subtitlesReady || !!loadError}
           />
 
-          {import.meta.env.DEV && (
+          {import.meta.env.DEV && syncMode !== 'unsupported' && (
             <div className="capabilities" aria-label="Detected iframe events">
-              <span className="capabilities-label">Detected events (dev):</span>
+              <span className="capabilities-label">Detected (dev):</span>
               {['play', 'pause', 'seek', 'time', 'ended'].map((key) => (
                 <span
                   key={key}
-                  className={
-                    capabilities[key] ? 'cap cap--yes' : 'cap cap--no'
-                  }
+                  className={capabilities[key] ? 'cap cap--yes' : 'cap cap--no'}
                 >
                   {key}
                 </span>
               ))}
             </div>
           )}
-
-          {import.meta.env.DEV && (
-            <p className="dev-hint">
-              Open the console — every <code>postMessage</code> from Synthesia is
-              logged as <code>[Synthesia iframe message]</code>.
-            </p>
-          )}
         </div>
       </div>
     </section>
   );
 }
-
-export { UNSUPPORTED_MSG };

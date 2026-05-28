@@ -11,6 +11,11 @@ node_modules
 dist
 dist-ssr
 *.local
+.env
+.env.*
+
+# Large local export (use VITE_VIDEO_URL on Render or file picker in browser)
+public/videos/demo.mp4
 
 # Editor directories and files
 .vscode/*

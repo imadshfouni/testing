@@ -14,9 +14,17 @@ const SYNTHESIA_ORIGIN_PREFIXES = [
 
 export function isSynthesiaOrigin(origin) {
   if (!origin || typeof origin !== 'string') return false;
-  return SYNTHESIA_ORIGIN_PREFIXES.some(
+  if (SYNTHESIA_ORIGIN_PREFIXES.some(
     (prefix) => origin === prefix || origin.startsWith(`${prefix}/`),
-  );
+  )) {
+    return true;
+  }
+  try {
+    const { hostname } = new URL(origin);
+    return hostname === 'synthesia.io' || hostname.endsWith('.synthesia.io');
+  } catch {
+    return false;
+  }
 }
 
 function toMs(value) {
@@ -128,11 +136,16 @@ export function isUsablePlayerEvent(parsed) {
 /**
  * Log every message from Synthesia origins in development (for API discovery).
  */
-export function logPostMessageDev({ origin, data, parsed }) {
+export function logPostMessageDev({ origin, data, parsed, fromSynthesia }) {
   if (!import.meta.env.DEV) return;
-  console.groupCollapsed('[Synthesia iframe message]', origin);
+  const label = fromSynthesia
+    ? '[Synthesia iframe message]'
+    : '[postMessage other origin]';
+  console.groupCollapsed(label, origin);
   console.log('raw:', data);
-  console.log('parsed:', parsed ?? '(not a recognized player event)');
+  if (fromSynthesia) {
+    console.log('parsed:', parsed ?? '(not a recognized player event)');
+  }
   console.groupEnd();
 }
 

@@ -8,7 +8,7 @@ import {
   probeSynthesiaPlayer,
 } from '../utils/synthesiaPostMessage';
 
-const DETECTION_TIMEOUT_MS = 6000;
+const DETECTION_TIMEOUT_MS = 3500;
 
 /**
  * Automatic subtitle sync for Synthesia iframe embeds.
@@ -175,12 +175,19 @@ export function useSubtitleSync({
     if (!enabled) return undefined;
 
     const onMessage = (event) => {
-      if (!isSynthesiaOrigin(event.origin)) return;
+      const fromSynthesia = isSynthesiaOrigin(event.origin);
+      const parsed = fromSynthesia ? parseSynthesiaMessage(event.data) : null;
 
-      const parsed = parseSynthesiaMessage(event.data);
-      logPostMessageDev({ origin: event.origin, data: event.data, parsed });
+      if (import.meta.env.DEV) {
+        logPostMessageDev({
+          origin: event.origin,
+          data: event.data,
+          parsed,
+          fromSynthesia,
+        });
+      }
 
-      if (parsed) handleIframeEvent(parsed);
+      if (fromSynthesia && parsed) handleIframeEvent(parsed);
     };
 
     window.addEventListener('message', onMessage);
