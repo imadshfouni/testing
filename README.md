@@ -54,17 +54,33 @@ They are served at `/subtitles/en.srt` and `/subtitles/fr.srt` and fetched on pa
 
 To replace subtitles, overwrite those files and refresh the app (no code changes required unless you add more languages).
 
-## Controls
+## Caption sync (two levels)
+
+### Level 1 — iframe `postMessage` (automatic when available)
+
+The app listens for `window.postMessage` events from `share.synthesia.io` (and related Synthesia origins). If the embed sends play, pause, time, or seek payloads, captions sync automatically.
+
+In **development**, open the browser console to inspect logged messages:
+
+```
+[Synthesia postMessage] https://share.synthesia.io
+```
+
+Synthesia does **not** document a public embed player API today. If nothing useful appears in the console, Level 2 is used.
+
+### Level 2 — external controls (fallback)
+
+If no usable iframe events are detected within ~4 seconds, the UI shows **Play Captions**, **Pause Captions**, and **Reset Captions** directly under the video, with an honest notice that the iframe does not expose playback to parent JavaScript.
 
 | Control | Behavior |
 |---------|----------|
-| **English / French** | Choose which SRT track to display |
-| **Subtitles Off** | Hide overlay (timer can still run) |
-| **Start Captions** | Start the sync timer (press when the video starts) |
-| **Pause Captions** | Pause the timer |
-| **Reset Captions** | Reset timer to `00:00.00` and pause |
+| **English / French / Off** | Switch track; **same timestamp** is kept |
+| **Off** | Hides overlay; timer keeps running unless paused |
+| **Play Captions** | Start / resume timer (`performance.now()` + `requestAnimationFrame`) |
+| **Pause Captions** | Pause timer; elapsed time preserved |
+| **Reset Captions** | Back to `00:00.00` and paused |
 
-Because the iframe cannot expose playback time to the parent page, captions are driven by a **manual timer** you start in sync with the video.
+We do **not** claim 100% automatic sync unless real Synthesia iframe events are detected.
 
 ## Deploy on Render (Static Site)
 
@@ -90,9 +106,11 @@ You can add a Blueprint file at the repo root if you use Render’s YAML config;
 ```
 public/subtitles/en.srt   # English cues
 public/subtitles/fr.srt   # French cues
-src/App.jsx               # UI, iframe, overlay, controls
-src/App.css               # Layout & subtitle styling
-src/utils/parseSrt.js     # SRT parser
+src/App.jsx                      # UI, iframe, overlay, controls
+src/App.css                      # Layout & subtitle styling
+src/hooks/useSubtitleSync.js     # Timer + iframe postMessage sync
+src/utils/parseSrt.js            # SRT parser
+src/utils/synthesiaPostMessage.js # postMessage parsing & dev logging
 ```
 
 ## Tech stack

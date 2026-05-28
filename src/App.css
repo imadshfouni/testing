@@ -25,7 +25,7 @@
   font-size: 0.95rem;
   line-height: 1.55;
   color: #a8b4c4;
-  max-width: 52ch;
+  max-width: 58ch;
 }
 
 .app-subtitle code {
@@ -47,16 +47,21 @@
   margin-bottom: 1.5rem;
 }
 
+.player-stack {
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow:
+    0 4px 24px rgba(0, 0, 0, 0.45),
+    0 0 0 1px rgba(255, 255, 255, 0.06);
+  background: #0a0d12;
+}
+
 .video-container {
   position: relative;
   width: 100%;
   aspect-ratio: 16 / 9;
   overflow: hidden;
-  border-radius: 12px;
   background: #000;
-  box-shadow:
-    0 4px 24px rgba(0, 0, 0, 0.45),
-    0 0 0 1px rgba(255, 255, 255, 0.06);
 }
 
 .video-container iframe {
@@ -91,47 +96,76 @@
   white-space: pre-wrap;
 }
 
-.timer-display {
-  margin: 0.75rem 0 0;
-  font-size: 0.9rem;
-  color: #8b98a8;
-  font-variant-numeric: tabular-nums;
-}
-
-.controls-section {
+.player-toolbar {
+  padding: 0.85rem 1rem 1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(12, 16, 22, 0.95);
   display: flex;
   flex-direction: column;
-  gap: 1.25rem;
+  gap: 0.85rem;
 }
 
-.control-group {
-  margin: 0;
-  padding: 1rem 1.1rem;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 10px;
-  background: rgba(255, 255, 255, 0.04);
-}
-
-.control-group legend {
-  font-weight: 600;
+.sync-banner {
+  display: flex;
+  gap: 0.65rem;
+  align-items: flex-start;
+  padding: 0.65rem 0.75rem;
+  border-radius: 8px;
   font-size: 0.85rem;
+  line-height: 1.45;
+}
+
+.sync-banner--detecting {
+  background: rgba(99, 179, 237, 0.1);
+  border: 1px solid rgba(99, 179, 237, 0.28);
+}
+
+.sync-banner--iframe {
+  background: rgba(72, 187, 120, 0.1);
+  border: 1px solid rgba(72, 187, 120, 0.35);
+}
+
+.sync-banner--manual {
+  background: rgba(237, 137, 54, 0.1);
+  border: 1px solid rgba(237, 137, 54, 0.35);
+}
+
+.sync-badge {
+  flex-shrink: 0;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 0.2rem 0.45rem;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.sync-message {
+  margin: 0;
+  color: #c5d0de;
+}
+
+.toolbar-group {
+  margin: 0;
+  padding: 0;
+  border: none;
+}
+
+.toolbar-group legend {
+  font-weight: 600;
+  font-size: 0.75rem;
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  color: #9aa8ba;
-  padding: 0 0.25rem;
-}
-
-.control-hint {
-  margin: 0 0 0.75rem;
-  font-size: 0.85rem;
   color: #8b98a8;
-  line-height: 1.45;
+  margin-bottom: 0.45rem;
+  padding: 0;
 }
 
 .button-row {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem;
+  gap: 0.45rem;
 }
 
 .btn {
@@ -139,9 +173,9 @@
   border: 1px solid rgba(255, 255, 255, 0.18);
   background: rgba(255, 255, 255, 0.06);
   color: #e8ecf1;
-  padding: 0.55rem 1rem;
+  padding: 0.5rem 0.9rem;
   border-radius: 8px;
-  font-size: 0.9rem;
+  font-size: 0.88rem;
   font-weight: 500;
   cursor: pointer;
   transition:
@@ -181,8 +215,65 @@
   border-color: #2b6cb0;
 }
 
+.timer-display {
+  margin: 0;
+  font-size: 0.85rem;
+  color: #8b98a8;
+  font-variant-numeric: tabular-nums;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.35rem;
+}
+
+.timer-label {
+  text-transform: uppercase;
+  font-size: 0.7rem;
+  letter-spacing: 0.05em;
+}
+
+.timer-state {
+  color: #6b7a8c;
+}
+
+.dev-hint {
+  margin: 0;
+  font-size: 0.78rem;
+  color: #6b7a8c;
+  line-height: 1.45;
+}
+
+.dev-hint code {
+  font-size: 0.9em;
+}
+
+.info-section {
+  margin-top: 1.5rem;
+  padding: 1rem 1.1rem;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.info-section h2 {
+  margin: 0 0 0.65rem;
+  font-size: 1rem;
+}
+
+.info-section ul {
+  margin: 0;
+  padding-left: 1.2rem;
+  color: #a8b4c4;
+  font-size: 0.9rem;
+  line-height: 1.55;
+}
+
+.info-section li + li {
+  margin-top: 0.4rem;
+}
+
 .status-message {
-  margin-top: 1.25rem;
+  margin-top: 0.5rem;
   padding: 0.85rem 1rem;
   border-radius: 8px;
   font-size: 0.9rem;
@@ -212,10 +303,6 @@
   font-size: 0.85rem;
 }
 
-.status-error code {
-  font-size: 0.88em;
-}
-
 .app-footer {
   padding: 1.25rem;
   text-align: center;
@@ -232,5 +319,9 @@
 
   .button-row .btn-primary {
     flex: 1 1 100%;
+  }
+
+  .sync-banner {
+    flex-direction: column;
   }
 }
