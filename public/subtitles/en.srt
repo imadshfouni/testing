@@ -1,0 +1,221 @@
+1
+00:00:00,600 --> 00:00:02,782
+welcome to the AI Automation Path,
+
+2
+00:00:03,032 --> 00:00:08,849
+This is where you move beyond simply using AI tools,
+and start understanding how real AI-powered systems
+
+3
+00:00:08,849 --> 00:00:09,534
+are built
+
+4
+00:00:11,334 --> 00:00:16,024
+Because today, the biggest opportunity is not just
+asking a chatbot for answers
+
+5
+00:00:17,224 --> 00:00:23,435
+The real opportunity is learning how to connect AI
+automations, voice agents, proposals, dashboards,
+
+6
+00:00:23,435 --> 00:00:27,255
+and business workflows into systems  that can actually
+work for you
+
+7
+00:00:28,455 --> 00:00:32,494
+In this path, you are going to learn how AI becomes
+more than a tool
+
+8
+00:00:33,495 --> 00:00:36,328
+and how AI becomes an operating system for business
+
+9
+00:00:37,528 --> 00:00:40,151
+At the beginning, you will start with the foundation.
+
+10
+00:00:40,152 --> 00:00:45,005
+Before building anything, you need to understand what
+is happening behind the scenes.
+
+11
+00:00:45,005 --> 00:00:47,466
+You will learn how AI actually works,
+
+12
+00:00:47,966 --> 00:00:49,266
+why prompting matters,
+
+13
+00:00:50,266 --> 00:00:53,238
+how automation platforms connect different tools
+together,
+
+14
+00:00:54,238 --> 00:00:57,350
+and what makes an AI agent different from a normal
+workflow.
+
+15
+00:00:58,350 --> 00:01:03,412
+This part is important, because once you understand
+the logic, the tools stop feeling random.
+
+16
+00:01:03,412 --> 00:01:05,119
+You start seeing the full picture.
+
+17
+00:01:05,119 --> 00:01:07,057
+A form becomes the entry point.
+
+18
+00:01:07,057 --> 00:01:08,753
+A database becomes the memory.
+
+19
+00:01:08,753 --> 00:01:10,982
+An automation platform becomes the engine.
+
+20
+00:01:10,982 --> 00:01:14,000
+And AI becomes the intelligence inside the system
+
+21
+00:01:15,201 --> 00:01:18,846
+In the Foundation Level, you will build the mindset
+first.
+
+22
+00:01:18,846 --> 00:01:22,678
+You will understand the difference between AI tools
+and AI systems
+
+23
+00:01:23,677 --> 00:01:23,828
+.
+
+24
+00:01:23,828 --> 00:01:30,608
+You will learn prompting fundamentals, structured
+prompting, automation logic, triggers, inputs, outputs,
+
+25
+00:01:30,608 --> 00:01:34,114
+workflow sequences, and the idea of AI agents.
+
+26
+00:01:34,114 --> 00:01:41,498
+You will also get introduced to the main tools used
+inside the path, including ChatGPT, OpenAI, Make.com,
+
+27
+00:01:41,498 --> 00:01:45,782
+Airtable, Vapi, PandaDoc, Slack, Perplexity, and Tally.
+
+28
+00:01:45,782 --> 00:01:48,882
+By the end of this level, you will not just know what
+these tools are.
+
+29
+00:01:48,882 --> 00:01:52,842
+You will understand how they fit together inside a
+real automation system.
+
+30
+00:01:54,042 --> 00:01:56,700
+After that, you enter the Mastery Level.
+
+31
+00:01:56,700 --> 00:02:01,902
+Here, you move from a single automation pipeline into
+a larger AI business system.
+
+32
+00:02:01,902 --> 00:02:06,453
+You will explore the   AI Architecture, where different
+AI agents work together.
+
+33
+00:02:06,453 --> 00:02:12,200
+You will build a research agent, a sales agent, a
+proposal agent, a marketing agent, an intelligence
+
+34
+00:02:12,200 --> 00:02:14,917
+agent, and an operations dashboard.
+
+35
+00:02:14,917 --> 00:02:22,208
+This is where you start understanding how AI can support
+not just one task, but an entire business process.
+
+36
+00:02:22,208 --> 00:02:23,972
+Each agent has a role.
+
+37
+00:02:23,972 --> 00:02:26,038
+Each part of the system adds value.
+
+38
+00:02:26,038 --> 00:02:29,893
+And together, they begin to act like a coordinated
+digital workforce.
+
+39
+00:02:31,093 --> 00:02:36,166
+By the end of this path, you will have gone from AI
+curiosity to real system building.
+
+40
+00:02:36,166 --> 00:02:42,297
+You will understand how to design AI workflows, connect
+tools together, automate business processes, build
+
+41
+00:02:42,297 --> 00:02:47,125
+AI-powered sales infrastructure, and think in systems
+instead of separate tasks.
+
+42
+00:02:47,126 --> 00:02:50,180
+And that is the real transformation of this path.
+
+43
+00:02:50,180 --> 00:02:52,594
+You are not here just to learn AI.
+
+44
+00:02:52,594 --> 00:02:54,754
+You are here to learn how to build with it.
+
+45
+00:02:54,754 --> 00:02:58,527
+So as you begin the AI Automation Path, remember this:
+
+46
+00:02:58,527 --> 00:03:04,134
+Every lesson is taking you closer to becoming someone
+who can look at a business process and think, "How
+
+47
+00:03:04,134 --> 00:03:06,584
+can I turn this into a smart system?"
+
+48
+00:03:06,584 --> 00:03:09,080
+That is the skill you are building here.
+
+49
+00:03:09,080 --> 00:03:12,656
+And this is where your journey as an AI system builder
+begins.
+
