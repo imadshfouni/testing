@@ -5,6 +5,9 @@ const SYNTHESIA_ORIGIN_PREFIXES = [
 ];
 
 /**
+ * Synthesia does not document a public embed postMessage API.
+ * Automatic overlay sync is only possible if the iframe emits player events.
+ *
  * @typedef {'play' | 'pause' | 'time' | 'ended' | 'seek' | 'reset' | 'unknown'} PlayerEventType
  * @typedef {{ type: PlayerEventType, currentTimeMs?: number, raw: unknown }} ParsedPlayerMessage
  */
@@ -20,7 +23,6 @@ function toMs(value) {
   if (value == null || Number.isNaN(Number(value))) return undefined;
   const n = Number(value);
   if (n < 0) return undefined;
-  // Heuristic: values under 10_000 are usually seconds (e.g. 125.4)
   return n > 10_000 ? n : n * 1000;
 }
 
@@ -76,23 +78,19 @@ function inferEventType(payload) {
   if (/ended|complete|finish/.test(joined)) {
     return 'ended';
   }
-  if (/seek|seeked|jump/.test(joined)) {
+  if (/seek|seeked|jump|scrub/.test(joined)) {
     return 'seek';
   }
   if (/reset|restart|replay/.test(joined)) {
     return 'reset';
   }
-  if (/time|progress|tick|update/.test(joined)) {
+  if (/time|progress|tick|update|timeupdate/.test(joined)) {
     return 'time';
   }
 
   return null;
 }
 
-/**
- * Attempt to parse a postMessage payload from a Synthesia (or compatible) embed.
- * Returns null if nothing recognizable.
- */
 export function parseSynthesiaMessage(data) {
   let payload = data;
 
@@ -128,13 +126,36 @@ export function isUsablePlayerEvent(parsed) {
 }
 
 /**
- * Development-only logging for iframe postMessage inspection.
+ * Log every message from Synthesia origins in development (for API discovery).
  */
 export function logPostMessageDev({ origin, data, parsed }) {
   if (!import.meta.env.DEV) return;
-  console.groupCollapsed('[Synthesia postMessage]', origin);
-  console.log('raw data:', data);
-  if (parsed) console.log('parsed:', parsed);
-  else console.log('parsed: (none)');
+  console.groupCollapsed('[Synthesia iframe message]', origin);
+  console.log('raw:', data);
+  console.log('parsed:', parsed ?? '(not a recognized player event)');
   console.groupEnd();
+}
+
+/**
+ * Optional probes (player.js-style). Harmless if unsupported.
+ */
+export function probeSynthesiaPlayer(iframe) {
+  if (!iframe?.contentWindow) return;
+  const target = 'https://share.synthesia.io';
+  const probes = [
+    { context: 'player.js', method: 'addEventListener', value: 'play' },
+    { context: 'player.js', method: 'addEventListener', value: 'pause' },
+    { context: 'player.js', method: 'addEventListener', value: 'timeupdate' },
+    { type: 'listening' },
+  ];
+  for (const msg of probes) {
+    try {
+      iframe.contentWindow.postMessage(msg, target);
+    } catch {
+      /* cross-origin — postMessage may still queue */
+    }
+  }
+  if (import.meta.env.DEV) {
+    console.info('[Synthesia] Sent postMessage probes to iframe (dev only).');
+  }
 }

@@ -4,8 +4,9 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
+    "generate-vtt": "node scripts/generate-vtt.mjs",
+    "dev": "npm run generate-vtt && vite",
+    "build": "npm run generate-vtt && vite build",
     "lint": "eslint .",
     "preview": "vite preview --host 0.0.0.0"
   },
